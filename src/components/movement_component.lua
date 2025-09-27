@@ -51,6 +51,10 @@ function MovementComponent.new(entity_id, data)
     self.turn_angle_deadzone = MOVEMENT.TURN_ANGLE_DEADZONE
     self.max_forward_turn = MOVEMENT.MAX_FORWARD_TURN
 
+	-- Stagger tracking while stunned (world-space jitter bookkeeping)
+	self.last_stagger_x = 0
+	self.last_stagger_y = 0
+
     return self
 end
 

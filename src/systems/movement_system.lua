@@ -2,6 +2,7 @@
 
 local component_system = require("util.component_system")
 local Vector2 = require("util.vector2")
+local stun_config = require("config.stun_config")
 
 local MovementSystem = {}
 MovementSystem.__index = MovementSystem
@@ -19,6 +20,7 @@ end
 function MovementSystem:process_entity(entity_id, dt)
     local transform = self.component_manager:get_component(entity_id, "Transform")
     local movement = self.component_manager:get_component(entity_id, "Movement")
+    local animation = self.component_manager:get_component(entity_id, "Animation")
 
     if not transform or not movement then
         return
@@ -36,6 +38,22 @@ function MovementSystem:process_entity(entity_id, dt)
     local velocity = movement:get_velocity()
     if not velocity:is_zero() then
         transform:translate(velocity.x * dt, velocity.y * dt)
+    end
+
+    -- Apply small world-space stagger while stunned (offset around nominal position)
+    if animation and animation.is_stunned and animation:is_stunned() then
+        local t = love.timer.getTime()
+        local phase = (entity_id % 13) * 0.41
+        local s = stun_config.STAGGER
+        local target_x = math.sin((t + phase) * s.FREQ) * s.PIXEL_AMP
+        local target_y = math.cos((t * 0.9 + phase * 1.37) * s.FREQ) * (s.PIXEL_AMP * 0.7)
+        local dx = target_x - (movement.last_stagger_x or 0)
+        local dy = target_y - (movement.last_stagger_y or 0)
+        if dx ~= 0 or dy ~= 0 then
+            transform:translate(dx, dy)
+            movement.last_stagger_x = target_x
+            movement.last_stagger_y = target_y
+        end
     end
 
     -- Apply angular velocity to rotation

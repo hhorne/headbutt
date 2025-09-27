@@ -91,6 +91,15 @@ function RenderSystem:draw_entity(entity_id, debug_mode)
         head_offset_y = offset_distance -- Move forward in the local coordinate system
     end
 
+	-- Extra head wobble while stunned (local lateral jiggle)
+	if animation and animation.is_stunned and animation:is_stunned() then
+		local stun_config = require("config.stun_config")
+		local hw = stun_config.HEAD_WOBBLE
+		local t = love.timer.getTime()
+		local phase2 = (entity_id % 11) * 0.53
+		head_offset_x = head_offset_x + math.sin((t + phase2) * hw.FREQ) * hw.PIXEL_AMP
+	end
+
     love.graphics.circle("fill", head_offset_x, head_offset_y, render:get_head_radius())
 
     love.graphics.pop()
