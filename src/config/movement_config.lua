@@ -28,10 +28,10 @@ local MOVEMENT_CONFIG = {
 -- Head Animation Configuration
 local HEAD_CONFIG = {
     OFFSET_SCALE = 0.4,            -- How far back the head pulls during charge
-    SNAP_FORWARD_SCALE = 0.4,      -- How far forward the head snaps during headbutt
-    SNAP_TOTAL_DURATION = 0.42,     -- Slightly longer to sell impact
-    SNAP_FORWARD_RATIO = 0.45,      -- A hair more forward time for readability
-	IFRAME_PRE_PEAK_TIME = 0.06,    -- Tiny increase for fairness
+    SNAP_FORWARD_SCALE = 0.65,      -- How far forward the head snaps during headbutt
+    SNAP_TOTAL_DURATION = 0.5,     -- Slightly longer to sell impact
+    SNAP_FORWARD_RATIO = 0.5,      -- A hair more forward time for readability
+	IFRAME_PRE_PEAK_TIME = 0.055,    -- Tiny increase for fairness
     SNAP_RETURN_EXTRA = 0.16,       -- Keep return smooth
 }
 

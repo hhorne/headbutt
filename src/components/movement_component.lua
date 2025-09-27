@@ -1,20 +1,4 @@
----@class MovementComponent : Component
----@field base_move_speed number
----@field base_rotation_speed number
----@field velocity Vector2
----@field desired_velocity Vector2
----@field angular_velocity number
----@field speed_multiplier number
----@field rotation_multiplier number
----@field backward_speed_mult number
----@field min_turn_speed_mult number
----@field turn_lerp_speed number
----@field turn_angle_deadzone number
----@field max_forward_turn number
----@field accel number
----@field decel number
 -- Movement Component - Handles movement speed, direction, and physics
-
 local component_system = require("util.component_system")
 local movement_config = require("config.movement_config")
 local Vector2 = require("util.vector2")
@@ -24,6 +8,21 @@ MovementComponent.__index = MovementComponent
 setmetatable(MovementComponent, {__index = component_system.Component})
 
 function MovementComponent.new(entity_id, data)
+    ---@class MovementComponent : Component
+    ---@field base_move_speed number
+    ---@field base_rotation_speed number
+    ---@field velocity Vector2
+    ---@field desired_velocity Vector2
+    ---@field angular_velocity number
+    ---@field speed_multiplier number
+    ---@field rotation_multiplier number
+    ---@field backward_speed_mult number
+    ---@field min_turn_speed_mult number
+    ---@field turn_lerp_speed number
+    ---@field turn_angle_deadzone number
+    ---@field max_forward_turn number
+    ---@field accel number
+    ---@field decel number
     local self = setmetatable(component_system.Component.new(entity_id), MovementComponent)
 
     local MOVEMENT = movement_config.MOVEMENT
