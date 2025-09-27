@@ -1,65 +1,49 @@
 -- Knockback Configuration - All tuning parameters for headbutt knockback physics
 -- Centralized location for tweaking knockback feel and balance
 
-local KNOCKBACK_CONFIG = {
-    -- Base knockback velocity (pixels per second)
-    -- This is the initial velocity applied to the target when hit by a fully charged headbutt
-    BASE_SPEED = 150, -- Was 400 originally, reduced to 150 for more reasonable knockback
+local KNOCKBACK_CONFIG = rawget(_G, "__KNOCKBACK_CONFIG__")
 
-    -- Duration of knockback effect (seconds)
-    -- How long the knockback force lasts before naturally decaying to zero
-    DURATION = 0.3,
+if not KNOCKBACK_CONFIG then
+    KNOCKBACK_CONFIG = {
+        -- Base knockback velocity (pixels per second)
+        BASE_SPEED = 150,
 
-    -- Force curve power (0.0 to 1.0+)
-    -- Controls how charge level affects knockback force
-    -- Lower values (0.3): More dramatic reduction at high charge levels (diminishing returns)
-    -- Higher values (0.8): More linear relationship between charge and force
-    -- 1.0: Completely linear (charge 0.5 = 50% force, charge 1.0 = 100% force)
-    CURVE_POWER = 0.3,
+        -- Duration of knockback effect (seconds)
+        DURATION = 0.3,
 
-    -- Physics decay settings
-    PHYSICS = {
-        -- Exponential decay rate (higher = faster decay)
-        -- Controls how quickly knockback velocity decreases over time
-        -- 4.0: Rapid decay with smooth deceleration
-        -- 2.0: Slower decay, longer sliding
-        -- 6.0: Very rapid decay, quick stop
-        DECAY_RATE = 4.0,
+        -- Force curve power (0.0 to 1.0+)
+        CURVE_POWER = 0.3,
 
-        -- Decay mode for knockback velocity over time
-        -- "exponential": use exponential_decay(t, DECAY_RATE)
-        -- "inverse_bell": use inverse_bell_short_tail with parameters below
-        DECAY_MODE = "exponential",
+        -- Physics decay settings
+        PHYSICS = {
+            DECAY_RATE = 4.0,
+            DECAY_MODE = "exponential",
+            INVERSE_BELL_HOLD = 0.78,
+            INVERSE_BELL_SHARPNESS = 4.0,
+            DEFAULT_MASS = 1.0,
+            HEAVY_MASS = 1.5,
+            LIGHT_MASS = 0.7
+        },
 
-        -- Parameters for inverse_bell decay
-        INVERSE_BELL_HOLD = 0.78,      -- portion of time to hold most of the speed
-        INVERSE_BELL_SHARPNESS = 4.0,  -- how sharp the final drop is
+        -- Charge calculation settings
+        CHARGE = {
+            MAX_CHARGE = 1.25,
+            SNAP_FORWARD_DURATION = 0.25
+        },
 
-        -- Mass multiplier for different entity types (future extensibility)
-        DEFAULT_MASS = 1.0,
-        HEAVY_MASS = 1.5,    -- Takes less knockback
-        LIGHT_MASS = 0.7     -- Takes more knockback
-    },
-
-    -- Charge calculation settings
-    CHARGE = {
-        -- Maximum charge level that can be achieved
-        MAX_CHARGE = 1.25,
-
-        -- Duration of the snap forward animation (seconds)
-        -- Used to estimate original charge during the snap phase
-        SNAP_FORWARD_DURATION = 0.25
-    },
-
-    -- Debug and visualization
-    DEBUG = {
-        -- Show knockback vectors and force calculations
-        SHOW_KNOCKBACK_VECTORS = false,
-
-        -- Show charge level and force multipliers
-        SHOW_FORCE_CALCULATIONS = false
+        -- Debug and visualization
+        DEBUG = {
+            SHOW_KNOCKBACK_VECTORS = false,
+            SHOW_FORCE_CALCULATIONS = false
+        }
     }
-}
+
+    _G.__KNOCKBACK_CONFIG__ = KNOCKBACK_CONFIG
+else
+    KNOCKBACK_CONFIG.PHYSICS = KNOCKBACK_CONFIG.PHYSICS or {}
+    KNOCKBACK_CONFIG.CHARGE = KNOCKBACK_CONFIG.CHARGE or {}
+    KNOCKBACK_CONFIG.DEBUG = KNOCKBACK_CONFIG.DEBUG or {}
+end
 
 -- Helper functions for knockback calculations
 
@@ -129,10 +113,10 @@ KNOCKBACK_CONFIG.PRESETS = {
 
     -- Strong knockback for competitive gameplay
     STRONG = {
-        BASE_SPEED = 250,
-        DURATION = 0.4,
+        BASE_SPEED = 360,
+        DURATION = 0.5,
         CURVE_POWER = 0.2,
-        DECAY_RATE = 3.0
+        DECAY_RATE = 2.6
     },
 
     -- Original legacy-style knockback (very strong)
@@ -158,10 +142,10 @@ function KNOCKBACK_CONFIG.apply_preset(preset_name)
     KNOCKBACK_CONFIG.DURATION = preset.DURATION
     KNOCKBACK_CONFIG.CURVE_POWER = preset.CURVE_POWER
     KNOCKBACK_CONFIG.PHYSICS.DECAY_RATE = preset.DECAY_RATE
-    -- Optional fields per preset
-    KNOCKBACK_CONFIG.PHYSICS.DECAY_MODE = preset.DECAY_MODE or KNOCKBACK_CONFIG.PHYSICS.DECAY_MODE
-    KNOCKBACK_CONFIG.PHYSICS.INVERSE_BELL_HOLD = preset.INVERSE_BELL_HOLD or KNOCKBACK_CONFIG.PHYSICS.INVERSE_BELL_HOLD
-    KNOCKBACK_CONFIG.PHYSICS.INVERSE_BELL_SHARPNESS = preset.INVERSE_BELL_SHARPNESS or KNOCKBACK_CONFIG.PHYSICS.INVERSE_BELL_SHARPNESS
+    -- Reset optional physics fields to sane defaults unless overridden by preset
+    KNOCKBACK_CONFIG.PHYSICS.DECAY_MODE = preset.DECAY_MODE or "exponential"
+    KNOCKBACK_CONFIG.PHYSICS.INVERSE_BELL_HOLD = preset.INVERSE_BELL_HOLD or 0.78
+    KNOCKBACK_CONFIG.PHYSICS.INVERSE_BELL_SHARPNESS = preset.INVERSE_BELL_SHARPNESS or 4.0
 end
 
 -- Get current configuration as a table (for saving/debugging)

@@ -58,6 +58,8 @@ function love.update(dt)
             gameManager.debug_mode = state.debug_mode
             gameManager.charge_input_mode = state.charge_input_mode
             gameManager.current_knockback_preset = state.current_knockback_preset
+            -- Ensure the preserved preset is actively applied after module reloads
+            require("config.knockback_config").apply_preset(gameManager.current_knockback_preset)
 
             -- Recreate players
             gameManager:create_player_dude(
@@ -121,6 +123,13 @@ function love.keypressed(key)
         local reloaded = hot_reload_manager:check_for_changes()
         if #reloaded > 0 and gameManager.debug_mode then
             print("Hot reloaded modules:", table.concat(reloaded, ", "))
+        end
+        -- If knockback config was reloaded, re-apply the current preset
+        for _, name in ipairs(reloaded) do
+            if name == "config.knockback_config" then
+                require("config.knockback_config").apply_preset(gameManager.current_knockback_preset)
+                break
+            end
         end
         return
     end

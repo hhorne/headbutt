@@ -30,6 +30,9 @@ function CollisionSystem.new(component_manager)
     self.last_pair_push_time = {}
     self.push_cooldown = 0.08
 
+    -- One-time debug log to confirm active knockback settings on first actual headbutt hit
+    self._logged_knockback_settings = false
+
     return self
 end
 
@@ -557,6 +560,14 @@ function CollisionSystem:apply_knockback(attacker_id, target_id, force)
     local direction = Vector2.new(dx / distance, dy / distance)
 
     -- Apply knockback using config
+    if not self._logged_knockback_settings then
+        local settings = require("config.knockback_config").get_current_settings()
+        print(string.format(
+            "Applying knockback: Speed %d  Dur %.2f  Curve %.2f  Decay %.1f (%s)",
+            settings.base_speed, settings.duration, settings.curve_power, settings.decay_rate, tostring(settings.decay_mode or "exp")
+        ))
+        self._logged_knockback_settings = true
+    end
     target_physics:add_knockback(direction, knockback_config.BASE_SPEED * force, knockback_config.DURATION)
 end
 

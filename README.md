@@ -76,7 +76,10 @@ I-Frames (invincibility frames)
 - Inputs: `config/input_config.lua`
 
 ### Running
-- Requires LÖVE 11.x. From the repo root, run:
-```bash
+- Requires LÖVE 11.x.
+
+From the `src` dir in repo root, run:
+
+```cmd
 love .
 ```

@@ -32,13 +32,6 @@ function GameManager.new()
     -- Create component manager
     self.component_manager = component_system.EntityComponentManager.new()
 
-    -- Create systems
-    self.movement_system = MovementSystem.new(self.component_manager)
-    self.animation_system = AnimationSystem.new(self.component_manager)
-    self.render_system = RenderSystem.new(self.component_manager)
-    self.collision_system = CollisionSystem.new(self.component_manager)
-    self.physics_system = PhysicsSystem.new(self.component_manager)
-
     -- Game state
     self.entities = {}
     self.debug_mode = false
@@ -47,6 +40,13 @@ function GameManager.new()
 
 	-- Apply selected knockback preset at startup
 	require("config.knockback_config").apply_preset(self.current_knockback_preset)
+
+    -- Create systems
+    self.movement_system = MovementSystem.new(self.component_manager)
+    self.animation_system = AnimationSystem.new(self.component_manager)
+    self.render_system = RenderSystem.new(self.component_manager)
+    self.collision_system = CollisionSystem.new(self.component_manager)
+    self.physics_system = PhysicsSystem.new(self.component_manager)
 
     -- Initialize debug renderer
     self.debug_renderer = DebugRenderer.new()
