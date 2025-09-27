@@ -9,7 +9,7 @@
                 "command": "love"
             },
             "args": [
-                "${workspaceFolder} --verbose"
+                "${workspaceFolder}/src --verbose"
             ],
             "scriptRoots": [
                 "${workspaceFolder}"
@@ -39,10 +39,10 @@
                 "command": "love"
             },
             "args": [
-                "${workspaceFolder} --screen test --verbose"
+                "${workspaceFolder}/src --screen test --verbose"
             ],
             "scriptRoots": [
-                "${workspaceFolder}"
+                "${workspaceFolder}/src"
             ],
             "integratedTerminal": true ,
         }
