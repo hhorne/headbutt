@@ -1,0 +1,50 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "lua-local",
+            "request": "launch",
+            "name": "[DEBUG]",
+            "program": {
+                "command": "love"
+            },
+            "args": [
+                "${workspaceFolder} --verbose"
+            ],
+            "scriptRoots": [
+                "${workspaceFolder}"
+            ],
+            "integratedTerminal": true ,
+        },
+        {
+            "type": "lua-local",
+            "request": "launch",
+            "name": "[DEBUG] --debug",
+            "program": {
+                "command": "love"
+            },
+            "args": [
+                "${workspaceFolder} --debug --verbose"
+            ],
+            "scriptRoots": [
+                "${workspaceFolder}"
+            ],
+            "integratedTerminal": true ,
+        },
+        {
+            "type": "lua-local",
+            "request": "launch",
+            "name": "[DEBUG] --screen test",
+            "program": {
+                "command": "love"
+            },
+            "args": [
+                "${workspaceFolder} --screen test --verbose"
+            ],
+            "scriptRoots": [
+                "${workspaceFolder}"
+            ],
+            "integratedTerminal": true ,
+        }
+    ]
+}

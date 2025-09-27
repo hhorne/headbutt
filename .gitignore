@@ -1,0 +1,4 @@
+dist/**/*
+love-11.4-win64/**/*.*
+**/*.love
+agents.md
