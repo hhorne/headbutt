@@ -204,6 +204,32 @@ function Easing.exponential_decay(t, rate)
     return math.exp(-t * rate)
 end
 
+-- Inverse-bell style decay with short backend tail
+-- Holds near 1 for most of the duration, then drops quickly near the end
+-- hold_portion: 0-1, fraction of time to mostly hold value near 1 (default 0.75)
+-- tail_sharpness: >0, how sharp the final drop is (default 4 for quartic-like drop)
+function Easing.inverse_bell_short_tail(t, hold_portion, tail_sharpness)
+    hold_portion = hold_portion or 0.75
+    tail_sharpness = tail_sharpness or 4.0
+
+    if t <= 0 then return 1 end
+    if t >= 1 then return 0 end
+
+    if t < hold_portion then
+        -- Ease-in very slightly toward 0 to avoid a perfectly flat plateau
+        local nt = t / hold_portion
+        -- Very gentle ease-in so it feels alive while mostly holding
+        local gentle = 1 - (1 - nt) * (1 - nt)
+        return 1 - gentle * 0.08 -- only lose ~8% during the hold
+    else
+        -- Short, sharp backend: map remaining time to [0,1] and drop fast
+        local nt = (t - hold_portion) / (1 - hold_portion)
+        -- Use a powered ease-in to create a steep falloff
+        local drop = math.pow(nt, tail_sharpness)
+        return math.max(0, 1 - 0.08 - (1 - 0.08) * drop)
+    end
+end
+
 -- Custom easing for head animation (smooth charge buildup)
 function Easing.charge_buildup(t)
     -- Starts slow, accelerates, then smooths out

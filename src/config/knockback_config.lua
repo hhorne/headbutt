@@ -26,6 +26,15 @@ local KNOCKBACK_CONFIG = {
         -- 6.0: Very rapid decay, quick stop
         DECAY_RATE = 4.0,
 
+        -- Decay mode for knockback velocity over time
+        -- "exponential": use exponential_decay(t, DECAY_RATE)
+        -- "inverse_bell": use inverse_bell_short_tail with parameters below
+        DECAY_MODE = "exponential",
+
+        -- Parameters for inverse_bell decay
+        INVERSE_BELL_HOLD = 0.78,      -- portion of time to hold most of the speed
+        INVERSE_BELL_SHARPNESS = 4.0,  -- how sharp the final drop is
+
         -- Mass multiplier for different entity types (future extensibility)
         DEFAULT_MASS = 1.0,
         HEAVY_MASS = 1.5,    -- Takes less knockback
@@ -69,7 +78,16 @@ end
 -- Calculate decay factor for a given time progress (0.0 to 1.0)
 function KNOCKBACK_CONFIG.calculate_decay_factor(time_progress)
     local easing = require("util.easing")
-    return easing.exponential_decay(time_progress, KNOCKBACK_CONFIG.PHYSICS.DECAY_RATE)
+    local mode = KNOCKBACK_CONFIG.PHYSICS.DECAY_MODE or "exponential"
+    if mode == "inverse_bell" then
+        return easing.inverse_bell_short_tail(
+            time_progress,
+            KNOCKBACK_CONFIG.PHYSICS.INVERSE_BELL_HOLD,
+            KNOCKBACK_CONFIG.PHYSICS.INVERSE_BELL_SHARPNESS
+        )
+    else
+        return easing.exponential_decay(time_progress, KNOCKBACK_CONFIG.PHYSICS.DECAY_RATE)
+    end
 end
 
 -- Estimate original charge from current charge during snap animation
@@ -119,10 +137,13 @@ KNOCKBACK_CONFIG.PRESETS = {
 
     -- Original legacy-style knockback (very strong)
     LEGACY = {
-        BASE_SPEED = 400,
-        DURATION = 0.3,
+        BASE_SPEED = 420,
+        DURATION = 1.1,
         CURVE_POWER = 0.3,
-        DECAY_RATE = 2.0
+        DECAY_RATE = 2.2,
+        DECAY_MODE = "inverse_bell",
+        INVERSE_BELL_HOLD = 0.80,
+        INVERSE_BELL_SHARPNESS = 4.5
     }
 }
 
@@ -137,6 +158,10 @@ function KNOCKBACK_CONFIG.apply_preset(preset_name)
     KNOCKBACK_CONFIG.DURATION = preset.DURATION
     KNOCKBACK_CONFIG.CURVE_POWER = preset.CURVE_POWER
     KNOCKBACK_CONFIG.PHYSICS.DECAY_RATE = preset.DECAY_RATE
+    -- Optional fields per preset
+    KNOCKBACK_CONFIG.PHYSICS.DECAY_MODE = preset.DECAY_MODE or KNOCKBACK_CONFIG.PHYSICS.DECAY_MODE
+    KNOCKBACK_CONFIG.PHYSICS.INVERSE_BELL_HOLD = preset.INVERSE_BELL_HOLD or KNOCKBACK_CONFIG.PHYSICS.INVERSE_BELL_HOLD
+    KNOCKBACK_CONFIG.PHYSICS.INVERSE_BELL_SHARPNESS = preset.INVERSE_BELL_SHARPNESS or KNOCKBACK_CONFIG.PHYSICS.INVERSE_BELL_SHARPNESS
 end
 
 -- Get current configuration as a table (for saving/debugging)
@@ -146,6 +171,9 @@ function KNOCKBACK_CONFIG.get_current_settings()
         duration = KNOCKBACK_CONFIG.DURATION,
         curve_power = KNOCKBACK_CONFIG.CURVE_POWER,
         decay_rate = KNOCKBACK_CONFIG.PHYSICS.DECAY_RATE,
+        decay_mode = KNOCKBACK_CONFIG.PHYSICS.DECAY_MODE,
+        inverse_bell_hold = KNOCKBACK_CONFIG.PHYSICS.INVERSE_BELL_HOLD,
+        inverse_bell_sharpness = KNOCKBACK_CONFIG.PHYSICS.INVERSE_BELL_SHARPNESS,
         max_charge = KNOCKBACK_CONFIG.CHARGE.MAX_CHARGE,
         snap_duration = KNOCKBACK_CONFIG.CHARGE.SNAP_FORWARD_DURATION
     }

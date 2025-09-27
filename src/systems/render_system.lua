@@ -195,9 +195,14 @@ function RenderSystem:draw_debug_ui(game_manager)
     -- Knockback properties directly under controls
     local knockback_config = require("config.knockback_config")
     local settings = knockback_config.get_current_settings()
-    local settings_text = string.format("Knockback: Speed %d  Dur %.2f  Curve %.1f  Decay %.1f",
-                                      settings.base_speed, settings.duration,
-                                      settings.curve_power, settings.decay_rate)
+    local settings_text = string.format(
+        "Knockback: Speed %d  Dur %.2f  Curve %.1f  Decay %.1f (%s)",
+        settings.base_speed,
+        settings.duration,
+        settings.curve_power,
+        settings.decay_rate,
+        tostring(settings.decay_mode or "exp")
+    )
     love.graphics.setColor(0.7, 0.7, 1, 1)
     love.graphics.print(settings_text, ui_x, current_y)
     current_y = current_y + line_height

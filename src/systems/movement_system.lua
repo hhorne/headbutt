@@ -24,6 +24,11 @@ function MovementSystem:process_entity(entity_id, dt)
         return
     end
 
+    -- Update movement state (accel/decel toward desired velocity)
+    if movement.update then
+        movement:update(dt)
+    end
+
     -- Store previous state for collision rollback
     transform:store_previous_state()
 

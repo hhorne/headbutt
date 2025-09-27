@@ -42,7 +42,7 @@ function GameManager.new()
     -- Game state
     self.entities = {}
     self.debug_mode = false
-    self.current_knockback_preset = "LEGACY"
+    self.current_knockback_preset = "STRONG"
     self.charge_input_mode = "press"
 
 	-- Apply selected knockback preset at startup

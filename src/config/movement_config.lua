@@ -9,12 +9,12 @@ local MOVEMENT_CONFIG = {
     -- Directional movement
     BACKWARD_SPEED_MULT = 0.5,    -- Movement speed multiplier when walking backwards
     MIN_TURN_SPEED_MULT = 0.6,    -- Minimum speed multiplier when at maximum turn angle (90 degrees)
-    TURN_LERP_SPEED = 5.0,        -- How quickly facing interpolates to match movement direction
+    TURN_LERP_SPEED = 7.0,        -- How quickly facing interpolates to match movement direction
     TURN_ANGLE_DEADZONE = 5,      -- Angle difference (in degrees) below which no speed penalty is applied
     MAX_FORWARD_TURN = 200,       -- Maximum angle difference for forward movement (will walk backwards beyond this)
 
     -- Charging movement
-    CHARGE_MOVE_SPEED_MULT = 0.35, -- Movement speed multiplier while charging (0.35 = 35% of base speed)
+    CHARGE_MOVE_SPEED_MULT = 0.40, -- Slightly faster while charging to keep agency
 
     -- Charge buildup
     CHARGE_MAX = 1.25,             -- Maximum charge value achievable
@@ -29,10 +29,10 @@ local MOVEMENT_CONFIG = {
 local HEAD_CONFIG = {
     OFFSET_SCALE = 0.4,            -- How far back the head pulls during charge
     SNAP_FORWARD_SCALE = 0.4,      -- How far forward the head snaps during headbutt
-    SNAP_TOTAL_DURATION = 0.4,     -- Total duration of snap animation in seconds
-    SNAP_FORWARD_RATIO = 0.4,     -- Portion of snap spent moving forward (0.10 = 10% forward, 90% return)
-	IFRAME_PRE_PEAK_TIME = 0.05,   -- Seconds before peak forward where i-frames begin
-    SNAP_RETURN_EXTRA = 0.15,       -- Extra seconds added to the return duration (does not affect forward)
+    SNAP_TOTAL_DURATION = 0.42,     -- Slightly longer to sell impact
+    SNAP_FORWARD_RATIO = 0.45,      -- A hair more forward time for readability
+	IFRAME_PRE_PEAK_TIME = 0.06,    -- Tiny increase for fairness
+    SNAP_RETURN_EXTRA = 0.16,       -- Keep return smooth
 }
 
 -- Math constants for angle calculations
